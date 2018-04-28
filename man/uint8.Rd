@@ -7,9 +7,9 @@
 uint8(x)
 }
 \arguments{
-\item{x}{Numeric vector. This will be converted to integer, and then modulo 256
-to bring it in the range 0-255. NA, NaN and Inf values will be
-silently converted to 0, as is the default for \code{raw}.}
+\item{x}{Numeric vector. \code{x} will be converted to integer, and then modulo 256
+to bring it in the range 0-255. NA, NaN and Inf values will cause an
+error.}
 }
 \value{
 Vector of \code{uint8} values.

@@ -6,15 +6,19 @@
 #' The input is first converted to integer and this result (modulu 256) is converted
 #' to R's built-in \code{raw} datatype.
 #'
-#' @param x Numeric vector. This will be converted to integer, and then modulo 256
-#'          to bring it in the range 0-255. NA, NaN and Inf values will be
-#'          silently converted to 0, as is the default for \code{raw}.
+#' @param x Numeric vector. \code{x} will be converted to integer, and then modulo 256
+#'          to bring it in the range 0-255. NA, NaN and Inf values will cause an
+#'          error.
 #'
 #' @return Vector of \code{uint8} values.
 #' @export
 #-----------------------------------------------------------------------------
 uint8 <- function(x) {
-  x <- as.raw(as.integer(x) %% 256)
+  i <- suppressWarnings(as.integer(x))
+  if (any(is.na(i))) {
+    stop("Non-integer values in:", paste(x, collapse=", "))
+  }
+  x <- as.raw(i %% 256)
   attr(x, 'class') <- 'uint8'
   x
 }
@@ -27,6 +31,7 @@ uint8 <- function(x) {
 #' @param ... for compatibility with default print method.
 #'
 #' @return Invisibly return original vector.
+#' @export
 #-----------------------------------------------------------------------------
 print.uint8 <- function(x, ...) {
   print(as.integer(x))
