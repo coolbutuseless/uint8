@@ -4,3 +4,4 @@
 *.swp
 .Rhistory
 working
+inst/doc

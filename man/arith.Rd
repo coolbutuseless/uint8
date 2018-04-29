@@ -8,6 +8,7 @@
 \alias{/.uint8}
 \alias{\%\%.uint8}
 \alias{\%/\%.uint8}
+\alias{^.uint8}
 \title{Arithmetic}
 \usage{
 \method{+}{uint8}(e1, e2)
@@ -21,6 +22,8 @@
 \method{\%\%}{uint8}(e1, e2)
 
 \method{\%/\%}{uint8}(e1, e2)
+
+\method{^}{uint8}(e1, e2)
 }
 \arguments{
 \item{e1}{an atomic vector of class 'uint8'}

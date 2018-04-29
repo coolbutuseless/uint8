@@ -44,3 +44,9 @@ NULL
 '%/%.uint8' <- function(e1, e2) {
   uint8(do.call('%/%', list(as.integer(e1), as.integer(e2))))
 }
+
+#' @rdname arith
+#' @export
+'^.uint8' <- function(e1, e2) {
+  uint8(do.call('^', list(as.integer(e1), as.integer(e2))))
+}
