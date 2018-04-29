@@ -1,14 +1,18 @@
 
 
+# Stealing an idea from 'int64' package on how to create
+# s3 methods for ':' and then override for 'uint8'
+#
 # Can't figure out how to document ':'  in roxygen without
 # an "--as-cran" complaint when checking.
+#
 # 'int64' also notes this problem in 'man/bit64s3.rd'
 
 
 #-----------------------------------------------------------------------------
 #' Sequence
 #'
-#' Currently only dispatches on first argument.
+#' Only dispatches on first argument.
 #'
 #' @param from from
 #' @param to to

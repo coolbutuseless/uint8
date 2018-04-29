@@ -4,6 +4,11 @@
 #-----------------------------------------------------------------------------
 #' Misc ops
 #'
+#' @param x  an atomic vector of class 'uint8'
+#' @param e1 an atomic vector of class 'uint8'
+#' @param na.rm logical. Should missing values be removed?
+#' @param ... arguments passed to other methods
+#'
 #' @name misc
 #-----------------------------------------------------------------------------
 NULL
@@ -11,27 +16,27 @@ NULL
 
 #' @rdname misc
 #' @export
-any.uint8 <- function(e1, ...) { any(as.logical(e1)) }
+any.uint8 <- function(..., na.rm=FALSE) { any(as.logical(...)) }
 
 
 #' @rdname misc
 #' @export
-all.uint8 <- function(e1, ...) { all(as.logical(e1)) }
+all.uint8 <- function(..., na.rm=FALSE) { all(as.logical(...)) }
 
 
 #' @rdname misc
 #' @export
-abs.uint8 <- function(e1) { e1 }
+abs.uint8 <- function(x) { x }
 
 
 #' @rdname misc
 #' @export
-sign.uint8 <- function(e1) { rep(1L, length(e1)) }
+sign.uint8 <- function(x) { rep(1L, length(x)) }
 
 
 #' @rdname misc
 #' @export
-sum.uint8 <- function(e1, ...) { uint8(sum(as.integer(e1)))}
+sum.uint8 <- function(..., na.rm=FALSE) { uint8(sum(as.integer(...)))}
 
 
 #' @rdname misc
@@ -46,4 +51,4 @@ as.bitstring <- function(e1) {
 
 #' @rdname misc
 #' @export
-'[.uint8' <- function(e1, ...) { uint8(as.integer(e1)[...])}
+'[.uint8' <- function(x, ...) { uint8(as.integer(x)[...])}

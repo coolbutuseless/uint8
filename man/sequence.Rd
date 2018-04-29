@@ -22,5 +22,5 @@
 sequence
 }
 \description{
-Currently only dispatches on first argument.
+Only dispatches on first argument.
 }

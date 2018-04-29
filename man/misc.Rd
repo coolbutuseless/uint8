@@ -11,19 +11,28 @@
 \alias{[.uint8}
 \title{Misc ops}
 \usage{
-\method{any}{uint8}(e1, ...)
+\method{any}{uint8}(..., na.rm = FALSE)
 
-\method{all}{uint8}(e1, ...)
+\method{all}{uint8}(..., na.rm = FALSE)
 
-\method{abs}{uint8}(e1)
+\method{abs}{uint8}(x)
 
-\method{sign}{uint8}(e1)
+\method{sign}{uint8}(x)
 
-\method{sum}{uint8}(e1, ...)
+\method{sum}{uint8}(..., na.rm = FALSE)
 
 as.bitstring(e1)
 
-\method{[}{uint8}(e1, ...)
+\method{[}{uint8}(x, ...)
+}
+\arguments{
+\item{...}{arguments passed to other methods}
+
+\item{na.rm}{logical. Should missing values be removed?}
+
+\item{x}{an atomic vector of class 'uint8'}
+
+\item{e1}{an atomic vector of class 'uint8'}
 }
 \description{
 Misc ops
