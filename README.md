@@ -78,9 +78,9 @@ Examples
 
 
 ```r
-b02 <- uint8(  2)
-b0a <- uint8( 10)
-bff <- uint8(255)
+b02 <- as.uint8(  2)
+b0a <- as.uint8( 10)
+bff <- as.uint8(255)
 
 
 # Addition is modulo 256
@@ -119,7 +119,7 @@ b02 ^ b0a   # 2^10 => 1024.    1024 %% 256 => 0
 
 ```r
 # initialisation is modulo 256
-uint8(seq(200, 300, 5))
+as.uint8(seq(200, 300, 5))
 ```
 
 ```
