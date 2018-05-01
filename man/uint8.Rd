@@ -2,19 +2,18 @@
 % Please edit documentation in R/uint8.R
 \name{uint8}
 \alias{uint8}
-\title{Create a uint8 vector}
+\title{Create a uint8 vector of the given size}
 \usage{
-uint8(x)
+uint8(length = 0)
 }
 \arguments{
-\item{x}{Numeric vector. \code{x} will be converted to integer, and then modulo 256
-to bring it in the range 0-255. NA, NaN and Inf values will cause an
-error.}
+\item{length}{A non-negative integer specifying the desired length.
+Double values will be coerced to integer: supplying an argument
+of length other than one is an error.}
 }
 \value{
-Vector of \code{uint8} values.
+A \code{uint8} vector of the specified length
 }
 \description{
-The input is first converted to integer and this result (modulu 256) is converted
-to R's built-in \code{raw} datatype.
+Create a uint8 vector of the given size
 }

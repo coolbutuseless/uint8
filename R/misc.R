@@ -36,7 +36,7 @@ sign.uint8 <- function(x) { rep(1L, length(x)) }
 
 #' @rdname misc
 #' @export
-sum.uint8 <- function(..., na.rm=FALSE) { uint8(sum(as.integer(...)))}
+sum.uint8 <- function(..., na.rm=FALSE) { as.uint8(sum(as.integer(...)))}
 
 
 #' @rdname misc
@@ -51,4 +51,4 @@ as.bitstring <- function(e1) {
 
 #' @rdname misc
 #' @export
-'[.uint8' <- function(x, ...) { uint8(as.integer(x)[...])}
+'[.uint8' <- function(x, ...) { as.uint8(as.integer(x)[...])}

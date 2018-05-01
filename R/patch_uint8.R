@@ -36,7 +36,7 @@ NULL
 #' @rdname sequence
 #' @export
 ":.uint8" <- function(from, to) {
-  uint8(seq.int(from=as.integer(from), to=as.integer(to)))
+  as.uint8(seq.int(from=as.integer(from), to=as.integer(to)))
 }
 
 

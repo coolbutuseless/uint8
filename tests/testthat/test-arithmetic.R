@@ -1,9 +1,9 @@
 context("arithmetic")
 
 test_that("arithmetic with only uint8 works", {
-  b1 <- uint8(10)
-  b2 <- uint8(255)
-  b3 <- uint8(3)
+  b1 <- as.uint8(10)
+  b2 <- as.uint8(255)
+  b3 <- as.uint8(3)
 
   expect_identical(as.integer(b1 + b3), 13L)
   expect_identical(as.integer(b1 - b3), 7L)

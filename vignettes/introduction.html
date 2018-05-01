@@ -12,7 +12,7 @@
 
 <meta name="author" content="mikefc" />
 
-<meta name="date" content="2018-04-29" />
+<meta name="date" content="2018-05-01" />
 
 <title>Introduction to uint8</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to uint8</h1>
 <h4 class="author"><em>mikefc</em></h4>
-<h4 class="date"><em>2018-04-29</em></h4>
+<h4 class="date"><em>2018-05-01</em></h4>
 
 
 
@@ -80,21 +80,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>An 8-bit unsigned integer type for R based upon the <code>raw</code> type.</li>
 <li>Each value is stored in a single byte (whereas <code>integer</code> values in R are stored in 4 bytes), so there can be memory savings.</li>
 <li>Stores only values 0-255</li>
-<li>No <code>NA</code>, <code>NaN</code>, or <code>Inf</code> values (as these are not supported by the <code>raw</code> type)</li>
+<li>No <code>NA</code>, <code>NaN</code>, or <code>Inf</code> values allowed</li>
 <li>Basic arithmethic</li>
 </ul>
 </div>
 <div id="rationale" class="section level2">
 <h2>Rationale</h2>
 <ul>
-<li>An experiment to see if there’s more useful data type for working with 8-bit data (without dropping down to the level of <code>Rcpp</code>)</li>
+<li>An experiment to see if there’s more useful data type for working with 8-bit data (without dropping down to the level of <code>Rcpp</code>).</li>
+<li>The aim is to have similar behaviour to the <code>uint8_t</code> type in C.</li>
 </ul>
 </div>
 <div id="features" class="section level2">
 <h2>Features</h2>
 <ul>
 <li>Each <code>uint8</code> is stored in a single byte (but there is, of course, overhead associated with atomic vector metainfo).</li>
-<li>Using <code>uint8</code> can result in 25% of the memory use of R <code>integer</code> values.</li>
+<li>Using <code>uint8</code> can result in 25% of the memory use of R <code>integer</code> values. e.g.
+<ul>
+<li><code>pryr::object_size(1:10000)</code> =&gt; 40 kB</li>
+<li><code>pryr::object_size(uint8(1:10000))</code> =&gt; 10.2 kB</li>
+</ul></li>
 <li>Specific S3 methods written for:
 <ul>
 <li><code>uint8()</code> (data creation)</li>
@@ -116,35 +121,90 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>Can’t use a <code>uint8</code> for subscripts (similar limitation in the <code>bit64</code> package for <code>integer64</code>)</li>
 <li>The <code>:</code> operator only dispatches on its first argument, so <code>uint8(1):10</code> will work, but <code>1:uint8(10)</code> won’t.</li>
-<li>The aim is to be as similar to <code>uint8_t</code> in C as possible.</li>
+</ul>
+</div>
+<div id="comparison-to-raw" class="section level2">
+<h2>Comparison to <code>raw</code></h2>
+<ul>
+<li><code>raw</code> allows for 8-bit data, but doesn’t support any arithmetic operators</li>
+<li><code>uint8</code> support basic arithmetic</li>
+<li><code>raw</code> accepts values outside the range 0-255 by setting them to zero</li>
+<li><code>uint8</code> accepts values outside the range 0-255 by calculating the value modulo 256. e.g. <code>uint8(-10)</code> is <code>246</code></li>
+<li><code>raw</code> accepts <code>NA</code>, <code>NaN</code>, <code>Inf</code> by setting them to zero.<br />
+</li>
+<li><code>uint8</code> disallows <code>NA</code>, <code>NaN</code> and <code>Inf</code></li>
 </ul>
 </div>
 <div id="examples" class="section level2">
 <h2>Examples</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b1 &lt;-<span class="st"> </span><span class="kw">uint8</span>(<span class="dv">10</span>)
-b2 &lt;-<span class="st"> </span><span class="kw">uint8</span>(<span class="dv">20</span>)
-b3 &lt;-<span class="st"> </span><span class="kw">uint8</span>(<span class="dv">50</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">b02 &lt;-<span class="st"> </span><span class="kw">as.uint8</span>(  <span class="dv">2</span>)
+b0a &lt;-<span class="st"> </span><span class="kw">as.uint8</span>( <span class="dv">10</span>)
+bff &lt;-<span class="st"> </span><span class="kw">as.uint8</span>(<span class="dv">255</span>)
 
-b1 <span class="op">+</span><span class="st"> </span>b2
-<span class="co">#&gt; [1] 30</span>
 
-b3 <span class="op">*</span><span class="st"> </span><span class="dv">5</span> <span class="op">+</span><span class="st"> </span>b2  <span class="co">#  270 %% 256 == 14</span>
-<span class="co">#&gt; [1] 14</span>
+<span class="co"># Addition is modulo 256</span>
+bff <span class="op">+</span><span class="st"> </span>b0a   <span class="co"># (255 + 10) %% 256 =&gt; 9</span>
+<span class="co">#&gt;   [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [36] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [71] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [106] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [141] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [176] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [211] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [246] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
 
-b3<span class="op">/</span>b1
-<span class="co">#&gt; [1] 5</span>
 
-b3<span class="op">/</span>b2
-<span class="co">#&gt; [1] 2</span>
+<span class="co"># Division result trucated to integer value</span>
+b0a<span class="op">/</span>b02   <span class="co"># 10/2 =&gt; 5</span>
+<span class="co">#&gt; [1] 0 0 0 0 0</span>
+bff<span class="op">/</span>b0a   <span class="co"># 255/10 =&gt; 25.5 =&gt; 25</span>
+<span class="co">#&gt;  [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
 
-b1 <span class="op">-</span><span class="st"> </span>b2  <span class="co"># -10  =&gt; 246</span>
-<span class="co">#&gt; [1] 246</span></code></pre></div>
+
+<span class="co"># exponentiation is modulo 256</span>
+b02 <span class="op">^</span><span class="st"> </span>b0a   <span class="co"># 2^10 =&gt; 1024.    1024 %% 256 =&gt; 0</span>
+<span class="co">#&gt;    [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;   [35] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;   [69] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [103] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [137] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [171] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [205] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [239] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [273] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [307] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [341] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [375] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [409] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [443] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [477] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [511] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [545] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [579] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [613] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [647] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [681] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [715] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [749] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [783] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [817] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [851] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [885] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [919] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [953] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt;  [987] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</span>
+<span class="co">#&gt; [1021] 0 0 0 0</span>
+
+<span class="co"># initialisation is modulo 256</span>
+<span class="kw">as.uint8</span>(<span class="kw">seq</span>(<span class="dv">200</span>, <span class="dv">300</span>, <span class="dv">5</span>))
+<span class="co">#&gt;  [1] 200 205 210 215 220 225 230 235 240 245 250 255   4   9  14  19  24</span>
+<span class="co">#&gt; [18]  29  34  39  44</span></code></pre></div>
 </div>
 <div id="future" class="section level2">
 <h2>Future</h2>
 <ul>
 <li>Flesh out the supported functions as needed</li>
-<li>Investigate if there’s any point to an actual <code>Rcpp</code> backend for speed or accuracy.</li>
+<li>Investigate if there’s any point to an actual <code>Rcpp</code> backend for speed or accuracy of behaviour.</li>
 </ul>
 </div>
 

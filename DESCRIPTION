@@ -1,7 +1,7 @@
 Package: uint8
 Type: Package
 Title: Unsigned 8bit Datatype
-Version: 0.1.0
+Version: 0.1.1
 Author: mikefc
 Maintainer: mikefc <mikefc@coolbutuseless.com>
 Description: A very thin wrapper over the built-in 'raw' datatype
